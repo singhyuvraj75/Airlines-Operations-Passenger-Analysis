@@ -338,7 +338,41 @@ order by
 ## PEAK TRAFFIC MONTH FROM EACH CITY WITH HIGHEST NO. OF PASSENGER 
 ## STEPS >> MONTHLY PASSENGER COUNT >> MAX PASSENGER BASED ON CITY >> PEAK MONTH
 
+WITH Monthly_Paasenger_count AS (
+    SELECT
+        origin_city,
+        YEAR(fly_date) AS Year,
+        MONTH(fly_date) AS Month,
+        SUM(passengers) AS total_passenger
+    FROM airports2
+    GROUP BY
+        origin_city,
+        Year,
+        Month
+),
 
+Max_Passengers_per_city AS (
+    SELECT
+        origin_city,
+        MAX(total_passenger) AS peak_passengers
+    FROM Monthly_Paasenger_count
+    GROUP BY
+        origin_city
+)
+
+SELECT
+    mpc.origin_city,
+    mpc.Year,
+    mpc.Month,
+    mpc.total_passenger
+FROM Monthly_Paasenger_count mpc
+JOIN Max_Passengers_per_city mp
+    ON mpc.origin_city = mp.origin_city
+   AND mpc.total_passenger = mp.peak_passengers
+ORDER BY
+    mpc.origin_city,
+    mpc.Year,
+    mpc.Month;
 
 
     
